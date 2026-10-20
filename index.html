@@ -6,105 +6,145 @@
 <meta name="theme-color" content="#142a4a">
 <title>Smart Student | Academic Analysis System</title>
 <style>
-:root{--navy:#142a4a;--blue:#2563eb;--bg:#f3f6fb;--ink:#172033;--muted:#64748b;--line:#e2e8f0;--white:#fff;--green:#15803d;--red:#b91c1c}
+:root{--navy:#142a4a;--blue:#2563eb;--bg:#f3f6fb;--ink:#172033;--muted:#64748b;--line:#e2e8f0;--green:#15803d;--red:#b91c1c}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}
-header{background:linear-gradient(120deg,#142a4a,#1e4776);color:white;padding:25px 16px 28px}
-.wrap{max-width:980px;margin:auto} .brand{display:flex;gap:12px;align-items:center}.logo{width:46px;height:46px;border-radius:14px;background:#ffffff20;display:grid;place-items:center;font-size:25px}
+header{background:linear-gradient(120deg,#142a4a,#1e4776);color:white;padding:22px 16px}.wrap{max-width:1050px;margin:auto}.brand{display:flex;gap:12px;align-items:center}.logo{width:46px;height:46px;border-radius:14px;background:#ffffff20;display:grid;place-items:center;font-size:25px}
 h1{font-size:clamp(22px,5vw,31px);margin:0}header p{margin:6px 0 0;color:#dbeafe;font-size:14px}
-main{max-width:980px;margin:18px auto;padding:0 12px 40px}
+main{max-width:1050px;margin:18px auto;padding:0 12px 40px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.userline{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}.stat,.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:0 4px 16px #0f172a08}.stat span{font-size:12px;color:var(--muted)}.stat strong{display:block;font-size:24px;margin-top:4px}
-.tabs{display:flex;gap:8px;overflow:auto;margin:14px 0}.tab{border:1px solid var(--line);border-radius:10px;background:white;padding:10px 13px;font-weight:650;white-space:nowrap;color:#334155}.tab.active{background:var(--blue);border-color:var(--blue);color:white}
+.tabs{display:flex;gap:8px;overflow-x:auto;margin:14px 0}.tab{border:1px solid var(--line);border-radius:10px;background:white;padding:10px 13px;font-weight:650;white-space:nowrap;color:#334155}.tab.active{background:var(--blue);border-color:var(--blue);color:white}
 .panel h2{font-size:19px;margin:0 0 5px}.hint{font-size:13px;color:var(--muted);margin:0 0 16px}
-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-size:13px;font-weight:650;color:#334155}input{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font:inherit;background:white;color:var(--ink)}input:focus{outline:2px solid #bfdbfe;border-color:var(--blue)}.subject-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
-button{border:0;border-radius:10px;padding:12px 15px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#eaf0f8;color:#1e3a5f}.danger{background:#fee2e2;color:#991b1b}.notice{font-size:13px;color:var(--muted);margin-top:13px;line-height:1.5}
-.hidden{display:none!important}.message{margin-top:12px;padding:11px;border-radius:10px;font-size:14px}.success{background:#dcfce7;color:#166534}.error{background:#fee2e2;color:#991b1b}
+form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-size:13px;font-weight:650;color:#334155}
+input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font:inherit;background:white;color:var(--ink)}input:focus,select:focus{outline:2px solid #bfdbfe;border-color:var(--blue)}
+.subject-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+button{border:0;border-radius:10px;padding:11px 14px;font:inherit;font-weight:700;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#eaf0f8;color:#1e3a5f}.danger{background:#fee2e2;color:#991b1b}.notice{font-size:13px;color:var(--muted);margin-top:13px;line-height:1.5}
+.hidden{display:none!important}.message{margin-top:12px;padding:11px;border-radius:10px;font-size:14px;overflow-wrap:anywhere}.success{background:#dcfce7;color:#166534}.error{background:#fee2e2;color:#991b1b}
 .searchbar{display:flex;gap:8px;margin:12px 0}.searchbar input{flex:1;min-width:0}
 table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:12px}.table-wrap{overflow-x:auto}
 .report-head{display:flex;justify-content:space-between;gap:10px;align-items:start}.pill{display:inline-block;border-radius:999px;padding:5px 9px;background:#dbeafe;color:#1d4ed8;font-size:12px;font-weight:800}.report-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:15px 0}.metric{background:#f8fafc;border:1px solid var(--line);padding:13px;border-radius:12px}.metric span{font-size:12px;color:var(--muted)}.metric strong{display:block;font-size:21px;margin-top:4px}
+.auth-box{max-width:540px;margin:25px auto}.auth-switch{display:flex;gap:8px;margin:12px 0}.subject-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.subject-row span{flex:1;min-width:120px}
 footer{text-align:center;color:var(--muted);font-size:12px;padding:10px 15px 25px}
-@media(max-width:520px){.stats{gap:7px}.stat{padding:11px}.stat strong{font-size:20px}.stat span{font-size:11px}form,.subject-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:13px}.report-grid{grid-template-columns:1fr 1fr}.searchbar{flex-direction:column}}
+@media(max-width:560px){.stats{gap:7px}.stat{padding:11px}.stat strong{font-size:19px}.stat span{font-size:11px}form,.subject-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:13px}.report-grid{grid-template-columns:1fr 1fr}.searchbar{flex-direction:column}.topbar{align-items:flex-start}}
+@media print{header,.tabs,.topbar,.stats,#addPanel,#recordsPanel,#subjectsPanel,#aboutPanel,.actions,footer{display:none!important}body{background:white}.panel{box-shadow:none;border:0}main{margin:0;max-width:none}}
 </style>
 </head>
 <body>
-<header><div class="wrap">
- <div class="brand"><div class="logo">🎓</div><div><h1>Smart Student</h1><p>Academic Analysis System</p></div></div>
-</div></header>
+<header><div class="wrap"><div class="brand"><div class="logo">🎓</div><div><h1>Smart Student</h1><p>Academic Analysis System · Online Edition</p></div></div></div></header>
 <main>
- <div class="stats">
-  <div class="stat"><span>Total Students</span><strong id="totalCount">0</strong></div>
-  <div class="stat"><span>Average Percentage</span><strong id="averagePct">—</strong></div>
-  <div class="stat"><span>Attendance Alerts</span><strong id="alertCount">0</strong></div>
- </div>
- <div class="tabs">
-  <button class="tab active" data-tab="add">＋ Add Student</button>
-  <button class="tab" data-tab="records">▤ Student Records</button>
-  <button class="tab" data-tab="about">ⓘ About Project</button>
- </div>
- <section class="panel" id="addPanel">
-  <h2>Add Student Details</h2><p class="hint">Enter student information and marks out of 100 for each subject.</p>
-  <form id="studentForm">
-   <div class="field"><label for="name">Student name *</label><input id="name" required maxlength="70" placeholder="e.g. Pavan Kumar"></div>
-   <div class="field"><label for="roll">Roll number *</label><input id="roll" required maxlength="30" placeholder="e.g. IT2026001"></div>
-   <div class="field"><label for="branch">Branch / Course *</label><input id="branch" required maxlength="50" placeholder="e.g. B.Tech IT"></div>
-   <div class="field"><label for="attendance">Attendance (%) *</label><input id="attendance" type="number" min="0" max="100" step="0.1" required placeholder="e.g. 82"></div>
-   <div class="field full"><label>Subject marks *</label><div class="subject-grid" id="subjectInputs"></div></div>
-   <div class="field full"><div class="actions"><button class="primary" type="submit">Save Student & Generate Report</button><button class="secondary" type="reset">Clear Form</button></div></div>
+ <section class="panel auth-box" id="authPanel">
+  <h2 id="authTitle">Login</h2><p class="hint">Sign in to access your online student records.</p>
+  <form id="authForm">
+   <div class="field full"><label for="authEmail">Email</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div>
+   <div class="field full"><label for="authPassword">Password</label><input id="authPassword" type="password" minlength="6" autocomplete="current-password" required placeholder="At least 6 characters"></div>
+   <div class="field full"><button class="primary" id="authSubmit" type="submit">Login</button></div>
   </form>
-  <div id="formMessage" aria-live="polite"></div>
-  <p class="notice">Privacy note: this starter version saves records in this browser on this device. It does not upload student data to a server.</p>
+  <div class="auth-switch"><button class="secondary" id="showSignup" type="button">Create account</button><button class="secondary" id="showLogin" type="button">Back to login</button></div>
+  <div id="authMessage" aria-live="polite"></div>
+  <p class="notice">New signups may need to confirm their email, depending on your Supabase Auth settings.</p>
  </section>
- <section class="panel hidden" id="recordsPanel">
-  <h2>Student Records</h2><p class="hint">Search by name or roll number. Select View Report to see details.</p>
-  <div class="searchbar"><input id="search" placeholder="Search student or roll number…"><button class="secondary" id="exportBtn" type="button">Export CSV</button></div>
-  <div id="recordsTable"></div>
-  <div id="recordMessage" aria-live="polite"></div>
- </section>
- <section class="panel hidden" id="aboutPanel">
-  <h2>About This Project</h2>
-  <p>This student academic analysis website records subject marks and attendance, calculates average percentage and grade, flags low attendance, and identifies subjects with marks below 50.</p>
-  <div class="report-grid">
-   <div class="metric"><span>Frontend</span><strong>HTML + CSS</strong></div>
-   <div class="metric"><span>Logic</span><strong>JavaScript</strong></div>
-   <div class="metric"><span>Storage</span><strong>Browser storage</strong></div>
-   <div class="metric"><span>Next upgrade</span><strong>Online database</strong></div>
+ <div id="app" class="hidden">
+  <div class="topbar"><div class="userline" id="userLine">Signed in</div><button class="secondary" id="logoutBtn" type="button">Log out</button></div>
+  <div class="stats">
+   <div class="stat"><span>Total Students You Can Access</span><strong id="totalCount">0</strong></div>
+   <div class="stat"><span>Average Percentage</span><strong id="averagePct">—</strong></div>
+   <div class="stat"><span>Attendance Alerts</span><strong id="alertCount">0</strong></div>
   </div>
-  <p class="notice">Grade scale: A+ ≥ 90, A ≥ 80, B ≥ 70, C ≥ 60, D ≥ 50, otherwise F. The sample pass rule is at least 33 in every subject; change it to match your college rules.</p>
- </section>
- <section class="panel hidden" id="reportPanel" style="margin-top:14px">
-  <div class="report-head"><div><h2>Student Academic Report</h2><p class="hint" id="reportSub"></p></div><button class="secondary" id="closeReport" type="button">Close</button></div>
-  <div id="reportContent"></div><div class="actions"><button class="secondary" id="printBtn" type="button">Print / Save PDF</button><button class="danger" id="deleteBtn" type="button">Delete This Record</button></div>
- </section>
+  <div class="tabs">
+   <button class="tab active" data-tab="add">＋ Add Student</button>
+   <button class="tab" data-tab="records">▤ Student Records</button>
+   <button class="tab hidden" id="subjectsTab" data-tab="subjects">⚙ Manage Subjects</button>
+   <button class="tab" data-tab="about">ⓘ About Project</button>
+  </div>
+  <section class="panel" id="addPanel">
+   <h2 id="studentFormTitle">Add Student Details</h2><p class="hint">Enter marks out of 100. Records are stored in your Supabase database.</p>
+   <form id="studentForm">
+    <div class="field"><label for="name">Student name *</label><input id="name" required maxlength="70" placeholder="e.g. Pavan Kumar"></div>
+    <div class="field"><label for="roll">Roll number *</label><input id="roll" required maxlength="30" placeholder="e.g. IT2026001"></div>
+    <div class="field"><label for="branch">Branch / Course *</label><input id="branch" required maxlength="50" placeholder="e.g. B.Tech IT"></div>
+    <div class="field"><label for="attendance">Attendance (%) *</label><input id="attendance" type="number" min="0" max="100" step="0.1" required placeholder="e.g. 82"></div>
+    <div class="field full"><label>Subject marks *</label><div class="subject-grid" id="subjectInputs"></div></div>
+    <div class="field full"><div class="actions"><button class="primary" type="submit" id="saveStudentBtn">Save Student & Generate Report</button><button class="secondary hidden" type="button" id="cancelEditBtn">Cancel edit</button><button class="secondary" type="reset">Clear Form</button></div></div>
+   </form><div id="formMessage" aria-live="polite"></div>
+  </section>
+  <section class="panel hidden" id="recordsPanel">
+   <h2>Student Records</h2><p class="hint">Search records available to your account. Admins can access all student records.</p>
+   <div class="searchbar"><input id="search" placeholder="Search student or roll number…"><button class="secondary" id="exportBtn" type="button">Export CSV</button></div>
+   <div id="recordsTable"></div><div id="recordMessage" aria-live="polite"></div>
+  </section>
+  <section class="panel hidden" id="subjectsPanel">
+   <h2>Manage Subjects</h2><p class="hint">Admin only. Renaming a subject keeps existing marks linked to it.</p>
+   <form id="subjectForm"><div class="field full"><label for="newSubject">New subject name</label><input id="newSubject" maxlength="60" placeholder="e.g. Digital Electronics" required></div><div class="field full"><button class="primary" type="submit">Add Subject</button></div></form>
+   <div id="subjectsList" style="margin-top:15px"></div><div id="subjectMessage" aria-live="polite"></div>
+  </section>
+  <section class="panel hidden" id="aboutPanel">
+   <h2>About This Project</h2><p>This website records subject marks and attendance, calculates percentage and grade, flags attendance below 75%, and identifies subjects with marks below 50.</p>
+   <div class="report-grid"><div class="metric"><span>Frontend</span><strong>HTML + CSS + JS</strong></div><div class="metric"><span>Authentication</span><strong>Supabase Auth</strong></div><div class="metric"><span>Database</span><strong>Supabase Postgres</strong></div><div class="metric"><span>Access control</span><strong>Row Level Security</strong></div></div>
+   <p class="notice">Grade scale: A+ ≥ 90, A ≥ 80, B ≥ 70, C ≥ 60, D ≥ 50, otherwise F. Sample pass rule: at least 33 in every subject; change it to match your college rules.</p>
+  </section>
+  <section class="panel hidden" id="reportPanel" style="margin-top:14px">
+   <div class="report-head"><div><h2>Student Academic Report</h2><p class="hint" id="reportSub"></p></div><button class="secondary" id="closeReport" type="button">Close</button></div>
+   <div id="reportContent"></div><div class="actions"><button class="secondary" id="editBtn" type="button">Edit Student</button><button class="secondary" id="printBtn" type="button">Print / Save PDF</button><button class="danger" id="deleteBtn" type="button">Delete This Record</button></div>
+  </section>
+ </div>
 </main>
 <footer>Smart Student Academic Analysis System · Student project prototype</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUBJECTS=["C Prog","Maths","Physics","Tech Comm","Comp Fund"];
-const KEY="smartStudentAcademicRecords_v1";
-let students=loadStudents(),currentRoll=null;
-const $=id=>document.getElementById(id);
-$("subjectInputs").innerHTML=SUBJECTS.map((s,i)=>`<div class="field"><label for="mark${i}">${s} marks (0–100)</label><input id="mark${i}" type="number" min="0" max="100" step="0.1" required placeholder="Enter marks"></div>`).join("");
-function loadStudents(){try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch{return []}}
-function save(){localStorage.setItem(KEY,JSON.stringify(students));renderStats();renderRecords()}
-function pct(s){return Object.values(s.marks).reduce((a,b)=>a+b,0)/SUBJECTS.length}
+/*
+ SETUP: Replace these two placeholders with your Supabase Project URL and publishable/anon key.
+ NEVER put a service_role key in frontend code.
+*/
+const SUPABASE_URL = "https://ovtyrrczwqahnkstwdak.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92dHlycmN6d3FhaG5rc3R3ZGFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0MjI0MTMsImV4cCI6MjEwNzk5ODQxM30.jiq9vdce-nSkkfPNzmUXFAhmnMS7oFnBbVWeRQJItUI";
+const DEFAULT_SUBJECTS = ["C Prog","Maths","Physics","Tech Comm","Comp Fund"];
+const $ = id => document.getElementById(id);
+let db = null, user = null, isAdmin = false, subjects = [], students = [], currentStudent = null, editingId = null, authMode = "login";
+const configured = SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("PASTE_") && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.includes("PASTE_");
+function escapeHTML(s){return String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function showMessage(id,msg,type="error"){ $(id).innerHTML=`<div class="message ${type}">${escapeHTML(msg)}</div>` }
+function clearMessage(id){$(id).innerHTML=""}
+function pct(s){const vals=subjects.map(sub=>Number((s.marks||{})[sub.id]));return vals.length?vals.reduce((a,b)=>a+(Number.isFinite(b)?b:0),0)/vals.length:0}
 function grade(p){return p>=90?"A+":p>=80?"A":p>=70?"B":p>=60?"C":p>=50?"D":"F"}
-function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function renderStats(){ $("totalCount").textContent=students.length;$("averagePct").textContent=students.length?(students.reduce((a,s)=>a+pct(s),0)/students.length).toFixed(1)+"%":"—";$("alertCount").textContent=students.filter(s=>Number(s.attendance)<75).length}
-function showMessage(id,msg,type){$(id).innerHTML=`<div class="message ${type}">${escapeHTML(msg)}</div>`}
-function switchTab(tab){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));["add","records","about"].forEach(t=>$(t+"Panel").classList.toggle("hidden",t!==tab));if(tab!=="records")$("reportPanel").classList.add("hidden")}
+function markInputHTML(){return subjects.map((s,i)=>`<div class="field"><label for="mark_${s.id}">${escapeHTML(s.name)} (0–100)</label><input id="mark_${s.id}" data-subject-id="${s.id}" type="number" min="0" max="100" step="0.1" required placeholder="Enter marks"></div>`).join("")}
+function refreshMarkInputs(marks={}){$("subjectInputs").innerHTML=subjects.length?markInputHTML():'<p class="notice">No subjects configured. Ask an admin to add subjects.</p>';subjects.forEach(s=>{const el=$("mark_"+s.id);if(el)el.value=marks[s.id] ?? ""})}
+function resetStudentForm(){editingId=null;currentStudent=null;$("studentForm").reset();$("studentFormTitle").textContent="Add Student Details";$("saveStudentBtn").textContent="Save Student & Generate Report";$("cancelEditBtn").classList.add("hidden");refreshMarkInputs();clearMessage("formMessage")}
+function switchTab(tab){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));["add","records","subjects","about"].forEach(t=>$(t+"Panel").classList.toggle("hidden",t!==tab));if(tab!=="records")$("reportPanel").classList.add("hidden");if(tab==="records")renderRecords()}
 document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
-$("studentForm").addEventListener("submit",e=>{e.preventDefault();const name=$("name").value.trim(),roll=$("roll").value.trim(),branch=$("branch").value.trim(),attendance=Number($("attendance").value);if(students.some(s=>s.roll.toLowerCase()===roll.toLowerCase())){showMessage("formMessage","That roll number already exists. Use a unique roll number.","error");return}
-const marks={};for(let i=0;i<SUBJECTS.length;i++){const v=Number($("mark"+i).value);if($("mark"+i).value===""||!Number.isFinite(v)||v<0||v>100){showMessage("formMessage","Enter valid marks from 0 to 100 for every subject.","error");return}marks[SUBJECTS[i]]=v}
-const student={name,roll,branch,attendance,marks,createdAt:new Date().toISOString()};students.push(student);save();showMessage("formMessage","Student saved successfully. Report generated below.","success");openReport(roll);$("studentForm").reset()});
-function renderRecords(){const q=($("search").value||"").trim().toLowerCase();const rows=students.filter(s=>s.name.toLowerCase().includes(q)||s.roll.toLowerCase().includes(q));if(!rows.length){$("recordsTable").innerHTML='<p class="notice">No matching student records yet. Add a student first.</p>';return}
-$("recordsTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Roll No.</th><th>Name</th><th>Percentage</th><th>Grade</th><th>Report</th></tr></thead><tbody>${rows.map(s=>`<tr><td>${escapeHTML(s.roll)}</td><td>${escapeHTML(s.name)}</td><td>${pct(s).toFixed(2)}%</td><td>${grade(pct(s))}</td><td><button class="secondary" type="button" data-view="${encodeURIComponent(s.roll)}">View</button></td></tr>`).join("")}</tbody></table></div>`;
-document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>openReport(decodeURIComponent(b.dataset.view))))}
+function updateStats(){$("totalCount").textContent=students.length;$("averagePct").textContent=students.length?(students.reduce((a,s)=>a+pct(s),0)/students.length).toFixed(1)+"%":"—";$("alertCount").textContent=students.filter(s=>Number(s.attendance)<75).length}
+async function loadProfile(){const {data,error}=await db.from("profiles").select("role").eq("id",user.id).maybeSingle();if(error)throw error;isAdmin=data?.role==="admin";$("subjectsTab").classList.toggle("hidden",!isAdmin)}
+async function loadSubjects(){const {data,error}=await db.from("subjects").select("id,name").order("name");if(error)throw error;subjects=data||[];refreshMarkInputs();renderSubjects()}
+async function loadStudents(){const {data,error}=await db.from("students").select("id,owner_id,name,roll,branch,attendance,marks,created_at").order("created_at",{ascending:false});if(error)throw error;students=(data||[]).map(s=>({...s,marks:s.marks||{}}));updateStats();renderRecords()}
+async function reloadData(){try{await loadProfile();await loadSubjects();await loadStudents();$("userLine").textContent=`Signed in: ${user.email||user.id}${isAdmin?" · Admin":""}`}catch(e){showMessage("recordMessage",friendlyError(e));}}
+function friendlyError(e){const m=e?.message||String(e);if(/Invalid API key/i.test(m))return "Supabase key is incorrect. Check the project URL and publishable/anon key.";if(/relation .* does not exist|Could not find the table/i.test(m))return "Database tables are not set up yet. Run the supplied supabase_setup.sql in Supabase SQL Editor.";if(/row-level security|permission denied|not allowed/i.test(m))return "Permission denied by database security. Check the SQL setup and your admin role.";return m}
+async function showApp(u){user=u;$("authPanel").classList.add("hidden");$("app").classList.remove("hidden");await reloadData()}
+async function showAuth(){user=null;isAdmin=false;students=[];subjects=[];$("app").classList.add("hidden");$("authPanel").classList.remove("hidden")}
+function setAuthMode(mode){authMode=mode;$("authTitle").textContent=mode==="signup"?"Create Account":"Login";$("authSubmit").textContent=mode==="signup"?"Sign Up":"Login";$("authPassword").autocomplete=mode==="signup"?"new-password":"current-password";clearMessage("authMessage")}
+$("showSignup").addEventListener("click",()=>setAuthMode("signup"));$("showLogin").addEventListener("click",()=>setAuthMode("login"));
+$("authForm").addEventListener("submit",async e=>{e.preventDefault();if(!configured){showMessage("authMessage","First add your Supabase Project URL and publishable/anon key in index.html.");return}const email=$("authEmail").value.trim(),password=$("authPassword").value;$("authSubmit").disabled=true;try{let result;if(authMode==="signup")result=await db.auth.signUp({email,password});else result=await db.auth.signInWithPassword({email,password});if(result.error)throw result.error;if(authMode==="signup"&&!result.data.session){showMessage("authMessage","Account created. Check your email to confirm the account, then log in.","success")}else if(result.data.user){await showApp(result.data.user)}}catch(err){showMessage("authMessage",friendlyError(err))}finally{$("authSubmit").disabled=false}});
+$("logoutBtn").addEventListener("click",async()=>{const {error}=await db.auth.signOut();if(error)showMessage("recordMessage",friendlyError(error));else await showAuth()});
+$("studentForm").addEventListener("submit",async e=>{e.preventDefault();clearMessage("formMessage");if(!subjects.length){showMessage("formMessage","Add at least one subject before saving a student.");return}const name=$("name").value.trim(),roll=$("roll").value.trim(),branch=$("branch").value.trim(),attendance=Number($("attendance").value);if(!name||!roll||!branch||!Number.isFinite(attendance)||attendance<0||attendance>100){showMessage("formMessage","Check the student details and attendance (0–100).");return}
+const marks={};for(const sub of subjects){const input=$("mark_"+sub.id),raw=input?.value,v=Number(raw);if(raw===""||!Number.isFinite(v)||v<0||v>100){showMessage("formMessage",`Enter valid marks from 0 to 100 for ${sub.name}.`);return}marks[sub.id]=v}
+const duplicate=students.some(s=>s.roll.toLowerCase()===roll.toLowerCase()&&s.id!==editingId);if(duplicate){showMessage("formMessage","That roll number already exists in the records available to you.");return}
+const payload={name,roll,branch,attendance,marks};const wasEditing=Boolean(editingId);try{let result;if(wasEditing){result=await db.from("students").update(payload).eq("id",editingId).select("id").single()}else{result=await db.from("students").insert({...payload,owner_id:user.id}).select("id").single()}if(result.error)throw result.error;const savedId=result.data.id;await loadStudents();resetStudentForm();showMessage("formMessage",wasEditing?"Student updated successfully.":"Student saved online successfully.","success");openReport(savedId)}catch(err){showMessage("formMessage",friendlyError(err))}});
+$("cancelEditBtn").addEventListener("click",resetStudentForm);
+function renderRecords(){if(!$("recordsTable"))return;const q=($("search").value||"").trim().toLowerCase();const rows=students.filter(s=>s.name.toLowerCase().includes(q)||s.roll.toLowerCase().includes(q));if(!rows.length){$("recordsTable").innerHTML='<p class="notice">No matching records. Add a student first.</p>';return}
+$("recordsTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Roll No.</th><th>Name</th><th>Percentage</th><th>Grade</th><th>Report</th></tr></thead><tbody>${rows.map(s=>`<tr><td>${escapeHTML(s.roll)}</td><td>${escapeHTML(s.name)}</td><td>${pct(s).toFixed(2)}%</td><td>${grade(pct(s))}</td><td><button class="secondary" type="button" data-view="${s.id}">View</button></td></tr>`).join("")}</tbody></table></div>`;
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>openReport(b.dataset.view)))}
 $("search").addEventListener("input",renderRecords);
-function openReport(roll){const s=students.find(x=>x.roll.toLowerCase()===roll.toLowerCase());if(!s)return;currentRoll=s.roll;const p=pct(s),weak=SUBJECTS.filter(sub=>s.marks[sub]<50),passed=SUBJECTS.every(sub=>s.marks[sub]>=33);$("reportSub").textContent=`${s.name} · Roll ${s.roll}`;
-$("reportContent").innerHTML=`<div class="report-grid"><div class="metric"><span>Percentage</span><strong>${p.toFixed(2)}%</strong></div><div class="metric"><span>Grade</span><strong>${grade(p)}</strong></div><div class="metric"><span>Result (sample rule)</span><strong>${passed?"PASS":"NEEDS IMPROVEMENT"}</strong></div><div class="metric"><span>Attendance</span><strong>${Number(s.attendance).toFixed(1)}%</strong></div></div><p><b>Branch:</b> ${escapeHTML(s.branch)} &nbsp; <span class="pill">${s.attendance<75?"Attendance Warning":"Attendance OK"}</span></p><div class="table-wrap"><table><thead><tr><th>Subject</th><th>Marks</th><th>Status</th></tr></thead><tbody>${SUBJECTS.map(sub=>`<tr><td>${escapeHTML(sub)}</td><td>${s.marks[sub]}/100</td><td>${s.marks[sub]<50?"Needs improvement":"OK"}</td></tr>`).join("")}</tbody></table></div><p><b>Weak subjects:</b> ${weak.length?weak.map(escapeHTML).join(", "):"None"}</p>`;
+function openReport(id){const s=students.find(x=>x.id===id);if(!s)return;currentStudent=s;const p=pct(s),weak=subjects.filter(sub=>Number(s.marks[sub.id]??0)<50),passed=subjects.length>0&&subjects.every(sub=>Number(s.marks[sub.id]??0)>=33);$("reportSub").textContent=`${s.name} · Roll ${s.roll}`;
+$("reportContent").innerHTML=`<div class="report-grid"><div class="metric"><span>Percentage</span><strong>${p.toFixed(2)}%</strong></div><div class="metric"><span>Grade</span><strong>${grade(p)}</strong></div><div class="metric"><span>Result (sample rule)</span><strong>${passed?"PASS":"NEEDS IMPROVEMENT"}</strong></div><div class="metric"><span>Attendance</span><strong>${Number(s.attendance).toFixed(1)}%</strong></div></div><p><b>Branch:</b> ${escapeHTML(s.branch)} &nbsp; <span class="pill">${Number(s.attendance)<75?"Attendance Warning":"Attendance OK"}</span></p><div class="table-wrap"><table><thead><tr><th>Subject</th><th>Marks</th><th>Status</th></tr></thead><tbody>${subjects.map(sub=>`<tr><td>${escapeHTML(sub.name)}</td><td>${Number(s.marks[sub.id]??0)}/100</td><td>${Number(s.marks[sub.id]??0)<50?"Needs improvement":"OK"}</td></tr>`).join("")}</tbody></table></div><p><b>Weak subjects:</b> ${weak.length?weak.map(sub=>escapeHTML(sub.name)).join(", "):"None"}</p>`;
 $("reportPanel").classList.remove("hidden");$("reportPanel").scrollIntoView({behavior:"smooth",block:"start"})}
 $("closeReport").addEventListener("click",()=>$("reportPanel").classList.add("hidden"));
+$("editBtn").addEventListener("click",()=>{if(!currentStudent)return;const s=currentStudent;editingId=s.id;$("name").value=s.name;$("roll").value=s.roll;$("branch").value=s.branch;$("attendance").value=s.attendance;refreshMarkInputs(s.marks);$("studentFormTitle").textContent="Edit Student Details";$("saveStudentBtn").textContent="Save Changes";$("cancelEditBtn").classList.remove("hidden");$("reportPanel").classList.add("hidden");switchTab("add");window.scrollTo({top:0,behavior:"smooth"})});
 $("printBtn").addEventListener("click",()=>window.print());
-$("deleteBtn").addEventListener("click",()=>{if(!currentRoll)return;if(confirm("Delete this student record from this browser?")){students=students.filter(s=>s.roll!==currentRoll);currentRoll=null;save();$("reportPanel").classList.add("hidden");showMessage("recordMessage","Student record deleted.","success")}});
-$("exportBtn").addEventListener("click",()=>{if(!students.length){showMessage("recordMessage","No records to export.","error");return}const csv=[["Name","Roll No","Branch",...SUBJECTS,"Percentage","Grade","Attendance"],...students.map(s=>[s.name,s.roll,s.branch,...SUBJECTS.map(sub=>s.marks[sub]),pct(s).toFixed(2),grade(pct(s)),s.attendance])].map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\r\n");const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="student-academic-records.csv";a.click();URL.revokeObjectURL(url)});
-renderStats();renderRecords();
+$("deleteBtn").addEventListener("click",async()=>{if(!currentStudent)return;if(!confirm(`Delete the record for ${currentStudent.name}? This cannot be undone.`))return;try{const {error}=await db.from("students").delete().eq("id",currentStudent.id);if(error)throw error;$("reportPanel").classList.add("hidden");currentStudent=null;await loadStudents();showMessage("recordMessage","Student record deleted.","success")}catch(e){showMessage("recordMessage",friendlyError(e))}});
+function renderSubjects(){if(!$("subjectsList"))return;if(!subjects.length){$("subjectsList").innerHTML='<p class="notice">No subjects yet. Add the first subject above.</p>';return}
+$("subjectsList").innerHTML=subjects.map(s=>`<div class="subject-row" style="padding:10px 0;border-bottom:1px solid var(--line)"><span>${escapeHTML(s.name)}</span><button class="secondary" type="button" data-rename="${s.id}">Rename</button><button class="danger" type="button" data-delete-subject="${s.id}">Delete</button></div>`).join("");
+document.querySelectorAll("[data-rename]").forEach(b=>b.addEventListener("click",async()=>{const sub=subjects.find(x=>x.id===b.dataset.rename);if(!sub)return;const name=prompt("Enter the new subject name:",sub.name)?.trim();if(!name||name===sub.name)return;if(subjects.some(x=>x.name.toLowerCase()===name.toLowerCase())){showMessage("subjectMessage","A subject with that name already exists.");return}try{const {error}=await db.from("subjects").update({name}).eq("id",sub.id);if(error)throw error;await loadSubjects();await loadStudents();showMessage("subjectMessage","Subject renamed successfully.","success")}catch(e){showMessage("subjectMessage",friendlyError(e))}}));
+document.querySelectorAll("[data-delete-subject]").forEach(b=>b.addEventListener("click",async()=>{const sub=subjects.find(x=>x.id===b.dataset.deleteSubject);if(!sub||!confirm(`Delete subject "${sub.name}"? Existing marks for this subject will no longer be shown.`))return;try{const {error}=await db.from("subjects").delete().eq("id",sub.id);if(error)throw error;await loadSubjects();await loadStudents();showMessage("subjectMessage","Subject deleted.","success")}catch(e){showMessage("subjectMessage",friendlyError(e))}}))}
+$("subjectForm").addEventListener("submit",async e=>{e.preventDefault();if(!isAdmin){showMessage("subjectMessage","Admin access required.");return}const name=$("newSubject").value.trim();if(!name)return;if(subjects.some(s=>s.name.toLowerCase()===name.toLowerCase())){showMessage("subjectMessage","That subject already exists.");return}try{const {error}=await db.from("subjects").insert({name});if(error)throw error;$("subjectForm").reset();await loadSubjects();showMessage("subjectMessage","Subject added successfully.","success")}catch(err){showMessage("subjectMessage",friendlyError(err))}});
+$("exportBtn").addEventListener("click",()=>{if(!students.length){showMessage("recordMessage","No records to export.");return}const headers=["Name","Roll No","Branch",...subjects.map(s=>s.name),"Percentage","Grade","Attendance"];const csv=[headers,...students.map(s=>[s.name,s.roll,s.branch,...subjects.map(sub=>s.marks[sub.id]??""),pct(s).toFixed(2),grade(pct(s)),s.attendance])].map(row=>row.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(",")).join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="student-academic-records.csv";a.click();URL.revokeObjectURL(url)});
+async function init(){if(!configured){showMessage("authMessage","Setup needed: enter your Supabase Project URL and publishable/anon key in the code, then save index.html.");return}if(!window.supabase){showMessage("authMessage","Supabase library could not load. Check internet connection and refresh.");return}db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const {data,error}=await db.auth.getSession();if(error){showMessage("authMessage",friendlyError(error));return}if(data.session)await showApp(data.session.user);db.auth.onAuthStateChange((_event,session)=>{if(session?.user){showApp(session.user)}else{showAuth()}})}
+init();
 </script>
 </body></html>
