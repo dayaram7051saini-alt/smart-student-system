@@ -174,7 +174,6 @@ $("studentForm").addEventListener("submit", async (e) => {
   openReport(roll);
   $("studentForm").reset();
 });
-const marks={};for(const sub of subjects){const input=$("mark_"+sub.id),raw=input?.value,v=Number(raw);if(raw===""||!Number.isFinite(v)||v<0||v>100){showMessage("formMessage",`Enter valid marks from 0 to 100 for ${sub.name}.`);return}marks[sub.id]=v}
 const duplicate=students.some(s=>s.roll.toLowerCase()===roll.toLowerCase()&&s.id!==editingId);if(duplicate){showMessage("formMessage","That roll number already exists in the records available to you.");return}
 const payload={name,roll,branch,attendance,marks};const wasEditing=Boolean(editingId);try{let result;if(wasEditing){result=await db.from("students").update(payload).eq("id",editingId).select("id").single()}else{result=await db.from("students").insert({...payload,owner_id:user.id}).select("id").single()}if(result.error)throw result.error;const savedId=result.data.id;await loadStudents();resetStudentForm();showMessage("formMessage",wasEditing?"Student updated successfully.":"Student saved online successfully.","success");openReport(savedId)}catch(err){showMessage("formMessage",friendlyError(err))}});
 $("cancelEditBtn").addEventListener("click",resetStudentForm);
