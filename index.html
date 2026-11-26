@@ -90,111 +90,44 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:10px 15px 25p
 <footer>Smart Student Academic Analysis System · Student project prototype</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/*
- SETUP: Replace these two placeholders with your Supabase Project URL and publishable/anon key.
- NEVER put a service_role key in frontend code.
-*/
 const SUPABASE_URL = "https://ovtyrrczwqahnkstwdak.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92dHlycmN6d3FhaG5rc3R3ZGFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0MjI0MTMsImV4cCI6MjEwNzk5ODQxM30.jiq9vdce-nSkkfPNzmUXFAhmnMS7oFnBbVWeRQJItUI";
-const DEFAULT_SUBJECTS = ["C Prog","Maths","Physics","Tech Comm","Comp Fund"];
 const $ = id => document.getElementById(id);
 let db = null, user = null, isAdmin = false, subjects = [], students = [], currentStudent = null, editingId = null, authMode = "login";
 const configured = SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("PASTE_") && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.includes("PASTE_");
+if (configured && window.supabase) {
+  db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
 function escapeHTML(s){return String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function showMessage(id,msg,type="error"){ $(id).innerHTML=`<div class="message ${type}">${escapeHTML(msg)}</div>` }
 function clearMessage(id){$(id).innerHTML=""}
 function pct(s){const vals=subjects.map(sub=>Number((s.marks||{})[sub.id]));return vals.length?vals.reduce((a,b)=>a+(Number.isFinite(b)?b:0),0)/vals.length:0}
 function grade(p){return p>=90?"A+":p>=80?"A":p>=70?"B":p>=60?"C":p>=50?"D":"F"}
-function markInputHTML(){return subjects.map((s,i)=>`<div class="field"><label for="mark_${s.id}">${escapeHTML(s.name)} (0–100)</label><input id="mark_${s.id}" data-subject-id="${s.id}" type="number" min="0" max="100" step="0.1" required placeholder="Enter marks"></div>`).join("")}
+function markInputHTML(){return subjects.map(s=>`<div class="field"><label for="mark_${s.id}">${escapeHTML(s.name)} (0–100)</label><input id="mark_${s.id}" data-subject-id="${s.id}" type="number" min="0" max="100" step="0.1" required placeholder="Enter marks"></div>`).join("")}
 function refreshMarkInputs(marks={}){$("subjectInputs").innerHTML=subjects.length?markInputHTML():'<p class="notice">No subjects configured. Ask an admin to add subjects.</p>';subjects.forEach(s=>{const el=$("mark_"+s.id);if(el)el.value=marks[s.id] ?? ""})}
 function resetStudentForm(){editingId=null;currentStudent=null;$("studentForm").reset();$("studentFormTitle").textContent="Add Student Details";$("saveStudentBtn").textContent="Save Student & Generate Report";$("cancelEditBtn").classList.add("hidden");refreshMarkInputs();clearMessage("formMessage")}
 function switchTab(tab){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));["add","records","subjects","about"].forEach(t=>$(t+"Panel").classList.toggle("hidden",t!==tab));if(tab!=="records")$("reportPanel").classList.add("hidden");if(tab==="records")renderRecords()}
 document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
 function updateStats(){$("totalCount").textContent=students.length;$("averagePct").textContent=students.length?(students.reduce((a,s)=>a+pct(s),0)/students.length).toFixed(1)+"%":"—";$("alertCount").textContent=students.filter(s=>Number(s.attendance)<75).length}
+function renderSubjects(){if(!$("subjectsList"))return;if(!subjects.length){$("subjectsList").innerHTML='<p class="notice">No subjects yet.</p>';return}$("subjectsList").innerHTML=subjects.map(s=>`<div class="subject-row"><span>${escapeHTML(s.name)}</span></div>`).join("")}
 async function loadProfile(){const {data,error}=await db.from("profiles").select("role").eq("id",user.id).maybeSingle();if(error)throw error;isAdmin=data?.role==="admin";$("subjectsTab").classList.toggle("hidden",!isAdmin)}
 async function loadSubjects(){const {data,error}=await db.from("subjects").select("id,name").order("name");if(error)throw error;subjects=data||[];refreshMarkInputs();renderSubjects()}
 async function loadStudents(){const {data,error}=await db.from("students").select("id,owner_id,name,roll,branch,attendance,marks,created_at").order("created_at",{ascending:false});if(error)throw error;students=(data||[]).map(s=>({...s,marks:s.marks||{}}));updateStats();renderRecords()}
-async function reloadData(){try{await loadProfile();await loadSubjects();await loadStudents();$("userLine").textContent=`Signed in: ${user.email||user.id}${isAdmin?" · Admin":""}`}catch(e){showMessage("recordMessage",friendlyError(e));}}
+async function reloadData(){try{await loadProfile();await loadSubjects();await loadStudents();$("userLine").textContent=`Signed in: ${user.email||user.id}${isAdmin?" · Admin":""}`}catch(e){showMessage("recordMessage",friendlyError(e))}}
 function friendlyError(e){const m=e?.message||String(e);if(/Invalid API key/i.test(m))return "Supabase key is incorrect. Check the project URL and publishable/anon key.";if(/relation .* does not exist|Could not find the table/i.test(m))return "Database tables are not set up yet. Run the supplied supabase_setup.sql in Supabase SQL Editor.";if(/row-level security|permission denied|not allowed/i.test(m))return "Permission denied by database security. Check the SQL setup and your admin role.";return m}
 async function showApp(u){user=u;$("authPanel").classList.add("hidden");$("app").classList.remove("hidden");await reloadData()}
 async function showAuth(){user=null;isAdmin=false;students=[];subjects=[];$("app").classList.add("hidden");$("authPanel").classList.remove("hidden")}
 function setAuthMode(mode){authMode=mode;$("authTitle").textContent=mode==="signup"?"Create Account":"Login";$("authSubmit").textContent=mode==="signup"?"Sign Up":"Login";$("authPassword").autocomplete=mode==="signup"?"new-password":"current-password";clearMessage("authMessage")}
 $("showSignup").addEventListener("click",()=>setAuthMode("signup"));$("showLogin").addEventListener("click",()=>setAuthMode("login"));
-$("authForm").addEventListener("submit",async e=>{e.preventDefault();if(!configured){showMessage("authMessage","First add your Supabase Project URL and publishable/anon key in index.html.");return}const email=$("authEmail").value.trim(),password=$("authPassword").value;$("authSubmit").disabled=true;try{let result;if(authMode==="signup")result=await db.auth.signUp({email,password});else result=await db.auth.signInWithPassword({email,password});if(result.error)throw result.error;if(authMode==="signup"&&!result.data.session){showMessage("authMessage","Account created. Check your email to confirm the account, then log in.","success")}else if(result.data.user){await showApp(result.data.user)}}catch(err){showMessage("authMessage",friendlyError(err))}finally{$("authSubmit").disabled=false}});
-$("logoutBtn").addEventListener("click",async()=>{const {error}=await db.auth.signOut();if(error)showMessage("recordMessage",friendlyError(error));else await showAuth()});
-$("studentForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const name = $("name").value.trim(),
-    roll = $("roll").value.trim(),
-    branch = $("branch").value.trim(),
-    attendance = Number($("attendance").value);
-
-  const marks = {};
-  for (let i = 0; i < SUBJECTS.length; i++) {
-    const v = Number($("mark" + i).value);
-    if (!Number.isFinite(v) || v < 0 || v > 100) {
-      showMessage("formMessage", "Enter valid marks from 0 to 100.", "error");
-      return;
-    }
-    marks[SUBJECTS[i]] = v;
-  }
-
-  const { data: userObj } = await sb.auth.getUser();
-  const { error } = await sb.from("students").insert([
-    {
-      student_name: name,
-      roll_number: roll,
-      branch: branch,
-      attendance: attendance,
-      c_programming: marks["C Prog"],
-      maths: marks["Maths"],
-      physics: marks["Physics"],
-      technical_communication: marks["Tech Comm"],
-      computer_fundamentals: marks["Comp Fund"],
-      user_id: userObj.user ? userObj.user.id : null,
-    },
-  ]);
-
-  if (error) {
-    showMessage("formMessage", "Database Error: " + error.message, "error");
-    return;
-  }
-
-  const student = {
-    name,
-    roll,
-    branch,
-    attendance,
-    marks,
-    createdAt: new Date().toISOString(),
-  };
-  students.push(student);
-  save();
-  showMessage("formMessage", "Student saved successfully!", "success");
-  openReport(roll);
-  $("studentForm").reset();
-});
-const duplicate=students.some(s=>s.roll.toLowerCase()===roll.toLowerCase()&&s.id!==editingId);if(duplicate){showMessage("formMessage","That roll number already exists in the records available to you.");return}
-const payload={name,roll,branch,attendance,marks};const wasEditing=Boolean(editingId);try{let result;if(wasEditing){result=await db.from("students").update(payload).eq("id",editingId).select("id").single()}else{result=await db.from("students").insert({...payload,owner_id:user.id}).select("id").single()}if(result.error)throw result.error;const savedId=result.data.id;await loadStudents();resetStudentForm();showMessage("formMessage",wasEditing?"Student updated successfully.":"Student saved online successfully.","success");openReport(savedId)}catch(err){showMessage("formMessage",friendlyError(err))}});
+$("authForm").addEventListener("submit",async e=>{e.preventDefault();if(!configured||!db){showMessage("authMessage","First add your Supabase Project URL and publishable/anon key in index.html.");return}const email=$("authEmail").value.trim(),password=$("authPassword").value;$("authSubmit").disabled=true;try{let result;if(authMode==="signup")result=await db.auth.signUp({email,password});else result=await db.auth.signInWithPassword({email,password});if(result.error)throw result.error;if(authMode==="signup"&&!result.data.session){showMessage("authMessage","Account created. Check your email to confirm the account, then log in.","success")}else if(result.data.user){await showApp(result.data.user)}}catch(err){showMessage("authMessage",friendlyError(err))}finally{$("authSubmit").disabled=false}});
+$("logoutBtn").addEventListener("click",async()=>{if(!db)return;const {error}=await db.auth.signOut();if(error)showMessage("recordMessage",friendlyError(error));else await showAuth()});
+$("studentForm").addEventListener("submit",async e=>{e.preventDefault();if(!db||!user)return;const name=$("name").value.trim(),roll=$("roll").value.trim(),branch=$("branch").value.trim(),attendance=Number($("attendance").value);if(!Number.isFinite(attendance)||attendance<0||attendance>100){showMessage("formMessage","Enter valid attendance from 0 to 100.","error");return}const marks={};for(const s of subjects){const el=$("mark_"+s.id);const v=Number(el?.value);if(!Number.isFinite(v)||v<0||v>100){showMessage("formMessage","Enter valid marks from 0 to 100.","error");return}marks[s.id]=v}const duplicate=students.some(s=>s.roll.toLowerCase()===roll.toLowerCase()&&s.id!==editingId);if(duplicate){showMessage("formMessage","That roll number already exists in the records available to you.","error");return}const payload={name,roll,branch,attendance,marks};const wasEditing=Boolean(editingId);try{let result;if(wasEditing){result=await db.from("students").update(payload).eq("id",editingId).select("id").single()}else{result=await db.from("students").insert({...payload,owner_id:user.id}).select("id").single()}if(result.error)throw result.error;const savedId=result.data.id;await loadStudents();resetStudentForm();showMessage("formMessage",wasEditing?"Student updated successfully.":"Student saved online successfully.","success");openReport(savedId)}catch(err){showMessage("formMessage",friendlyError(err),"error")}});
 $("cancelEditBtn").addEventListener("click",resetStudentForm);
+$("subjectForm").addEventListener("submit",async e=>{e.preventDefault();if(!db||!isAdmin)return;const subName=$("newSubject").value.trim();if(!subName)return;try{const {error}=await db.from("subjects").insert({name:subName});if(error)throw error;$("subjectForm").reset();await loadSubjects();showMessage("subjectMessage","Subject added.","success")}catch(err){showMessage("subjectMessage",friendlyError(err),"error")}});
 function renderRecords(){if(!$("recordsTable"))return;const q=($("search").value||"").trim().toLowerCase();const rows=students.filter(s=>s.name.toLowerCase().includes(q)||s.roll.toLowerCase().includes(q));if(!rows.length){$("recordsTable").innerHTML='<p class="notice">No matching records. Add a student first.</p>';return}
 $("recordsTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Roll No.</th><th>Name</th><th>Percentage</th><th>Grade</th><th>Report</th></tr></thead><tbody>${rows.map(s=>`<tr><td>${escapeHTML(s.roll)}</td><td>${escapeHTML(s.name)}</td><td>${pct(s).toFixed(2)}%</td><td>${grade(pct(s))}</td><td><button class="secondary" type="button" data-view="${s.id}">View</button></td></tr>`).join("")}</tbody></table></div>`;
 document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>openReport(b.dataset.view)))}
 $("search").addEventListener("input",renderRecords);
-function openReport(id){const s=students.find(x=>x.id===id);if(!s)return;currentStudent=s;const p=pct(s),weak=subjects.filter(sub=>Number(s.marks[sub.id]??0)<50),passed=subjects.length>0&&subjects.every(sub=>Number(s.marks[sub.id]??0)>=33);$("reportSub").textContent=`${s.name} · Roll ${s.roll}`;
-$("reportContent").innerHTML=`<div class="report-grid"><div class="metric"><span>Percentage</span><strong>${p.toFixed(2)}%</strong></div><div class="metric"><span>Grade</span><strong>${grade(p)}</strong></div><div class="metric"><span>Result (sample rule)</span><strong>${passed?"PASS":"NEEDS IMPROVEMENT"}</strong></div><div class="metric"><span>Attendance</span><strong>${Number(s.attendance).toFixed(1)}%</strong></div></div><p><b>Branch:</b> ${escapeHTML(s.branch)} &nbsp; <span class="pill">${Number(s.attendance)<75?"Attendance Warning":"Attendance OK"}</span></p><div class="table-wrap"><table><thead><tr><th>Subject</th><th>Marks</th><th>Status</th></tr></thead><tbody>${subjects.map(sub=>`<tr><td>${escapeHTML(sub.name)}</td><td>${Number(s.marks[sub.id]??0)}/100</td><td>${Number(s.marks[sub.id]??0)<50?"Needs improvement":"OK"}</td></tr>`).join("")}</tbody></table></div><p><b>Weak subjects:</b> ${weak.length?weak.map(sub=>escapeHTML(sub.name)).join(", "):"None"}</p>`;
-$("reportPanel").classList.remove("hidden");$("reportPanel").scrollIntoView({behavior:"smooth",block:"start"})}
-$("closeReport").addEventListener("click",()=>$("reportPanel").classList.add("hidden"));
-$("editBtn").addEventListener("click",()=>{if(!currentStudent)return;const s=currentStudent;editingId=s.id;$("name").value=s.name;$("roll").value=s.roll;$("branch").value=s.branch;$("attendance").value=s.attendance;refreshMarkInputs(s.marks);$("studentFormTitle").textContent="Edit Student Details";$("saveStudentBtn").textContent="Save Changes";$("cancelEditBtn").classList.remove("hidden");$("reportPanel").classList.add("hidden");switchTab("add");window.scrollTo({top:0,behavior:"smooth"})});
-$("printBtn").addEventListener("click",()=>window.print());
-$("deleteBtn").addEventListener("click",async()=>{if(!currentStudent)return;if(!confirm(`Delete the record for ${currentStudent.name}? This cannot be undone.`))return;try{const {error}=await db.from("students").delete().eq("id",currentStudent.id);if(error)throw error;$("reportPanel").classList.add("hidden");currentStudent=null;await loadStudents();showMessage("recordMessage","Student record deleted.","success")}catch(e){showMessage("recordMessage",friendlyError(e))}});
-function renderSubjects(){if(!$("subjectsList"))return;if(!subjects.length){$("subjectsList").innerHTML='<p class="notice">No subjects yet. Add the first subject above.</p>';return}
-$("subjectsList").innerHTML=subjects.map(s=>`<div class="subject-row" style="padding:10px 0;border-bottom:1px solid var(--line)"><span>${escapeHTML(s.name)}</span><button class="secondary" type="button" data-rename="${s.id}">Rename</button><button class="danger" type="button" data-delete-subject="${s.id}">Delete</button></div>`).join("");
-document.querySelectorAll("[data-rename]").forEach(b=>b.addEventListener("click",async()=>{const sub=subjects.find(x=>x.id===b.dataset.rename);if(!sub)return;const name=prompt("Enter the new subject name:",sub.name)?.trim();if(!name||name===sub.name)return;if(subjects.some(x=>x.name.toLowerCase()===name.toLowerCase())){showMessage("subjectMessage","A subject with that name already exists.");return}try{const {error}=await db.from("subjects").update({name}).eq("id",sub.id);if(error)throw error;await loadSubjects();await loadStudents();showMessage("subjectMessage","Subject renamed successfully.","success")}catch(e){showMessage("subjectMessage",friendlyError(e))}}));
-document.querySelectorAll("[data-delete-subject]").forEach(b=>b.addEventListener("click",async()=>{const sub=subjects.find(x=>x.id===b.dataset.deleteSubject);if(!sub||!confirm(`Delete subject "${sub.name}"? Existing marks for this subject will no longer be shown.`))return;try{const {error}=await db.from("subjects").delete().eq("id",sub.id);if(error)throw error;await loadSubjects();await loadStudents();showMessage("subjectMessage","Subject deleted.","success")}catch(e){showMessage("subjectMessage",friendlyError(e))}}))}
-$("subjectForm").addEventListener("submit",async e=>{e.preventDefault();if(!isAdmin){showMessage("subjectMessage","Admin access required.");return}const name=$("newSubject").value.trim();if(!name)return;if(subjects.some(s=>s.name.toLowerCase()===name.toLowerCase())){showMessage("subjectMessage","That subject already exists.");return}try{const {error}=await db.from("subjects").insert({name});if(error)throw error;$("subjectForm").reset();await loadSubjects();showMessage("subjectMessage","Subject added successfully.","success")}catch(err){showMessage("subjectMessage",friendlyError(err))}});
-$("exportBtn").addEventListener("click",()=>{if(!students.length){showMessage("recordMessage","No records to export.");return}const headers=["Name","Roll No","Branch",...subjects.map(s=>s.name),"Percentage","Grade","Attendance"];const csv=[headers,...students.map(s=>[s.name,s.roll,s.branch,...subjects.map(sub=>s.marks[sub.id]??""),pct(s).toFixed(2),grade(pct(s)),s.attendance])].map(row=>row.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(",")).join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="student-academic-records.csv";a.click();URL.revokeObjectURL(url)});
-async function init(){if(!configured){showMessage("authMessage","Setup needed: enter your Supabase Project URL and publishable/anon key in the code, then save index.html.");return}if(!window.supabase){showMessage("authMessage","Supabase library could not load. Check internet connection and refresh.");return}db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const {data,error}=await db.auth.getSession();if(error){showMessage("authMessage",friendlyError(error));return}if(data.session)await showApp(data.session.user);db.auth.onAuthStateChange((_event,session)=>{if(session?.user){showApp(session.user)}else{showAuth()}})}
-init();
-</script>
-</body></html>
+function openReport(id){const s=students.find(x=>x.id===id);if(!s)return;currentStudent=s;const p=pct(s),weak=subjects.filter(sub=>Number(s.marks[sub.id]??0)<50),passed=subjects.length>0&&subjects.every(sub=>Number(s.marks[sub.id]??0)>=33);
+$("reportSub").textContent=`${s.name} · Roll ${s.roll} · ${s.branch}`;
+$("reportContent").innerHTML=`<div class="report-grid"><div class="metric"><span>Percentage</span><strong>${p.toFixed(2)}%</strong></div><div class="metric"><span>Grade</span><strong>${grade(p)}</strong></div><div class="metric"><span>Attendance</span><strong>${Number(s.attendance)}%${Num
