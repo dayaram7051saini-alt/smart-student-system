@@ -122,7 +122,58 @@ function setAuthMode(mode){authMode=mode;$("authTitle").textContent=mode==="sign
 $("showSignup").addEventListener("click",()=>setAuthMode("signup"));$("showLogin").addEventListener("click",()=>setAuthMode("login"));
 $("authForm").addEventListener("submit",async e=>{e.preventDefault();if(!configured){showMessage("authMessage","First add your Supabase Project URL and publishable/anon key in index.html.");return}const email=$("authEmail").value.trim(),password=$("authPassword").value;$("authSubmit").disabled=true;try{let result;if(authMode==="signup")result=await db.auth.signUp({email,password});else result=await db.auth.signInWithPassword({email,password});if(result.error)throw result.error;if(authMode==="signup"&&!result.data.session){showMessage("authMessage","Account created. Check your email to confirm the account, then log in.","success")}else if(result.data.user){await showApp(result.data.user)}}catch(err){showMessage("authMessage",friendlyError(err))}finally{$("authSubmit").disabled=false}});
 $("logoutBtn").addEventListener("click",async()=>{const {error}=await db.auth.signOut();if(error)showMessage("recordMessage",friendlyError(error));else await showAuth()});
-$("studentForm").addEventListener("submit",async e=>{e.preventDefault();clearMessage("formMessage");if(!subjects.length){showMessage("formMessage","Add at least one subject before saving a student.");return}const name=$("name").value.trim(),roll=$("roll").value.trim(),branch=$("branch").value.trim(),attendance=Number($("attendance").value);if(!name||!roll||!branch||!Number.isFinite(attendance)||attendance<0||attendance>100){showMessage("formMessage","Check the student details and attendance (0–100).");return}
+$("studentForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = $("name").value.trim(),
+    roll = $("roll").value.trim(),
+    branch = $("branch").value.trim(),
+    attendance = Number($("attendance").value);
+
+  const marks = {};
+  for (let i = 0; i < SUBJECTS.length; i++) {
+    const v = Number($("mark" + i).value);
+    if (!Number.isFinite(v) || v < 0 || v > 100) {
+      showMessage("formMessage", "Enter valid marks from 0 to 100.", "error");
+      return;
+    }
+    marks[SUBJECTS[i]] = v;
+  }
+
+  const { data: userObj } = await sb.auth.getUser();
+  const { error } = await sb.from("students").insert([
+    {
+      student_name: name,
+      roll_number: roll,
+      branch: branch,
+      attendance: attendance,
+      c_programming: marks["C Prog"],
+      maths: marks["Maths"],
+      physics: marks["Physics"],
+      technical_communication: marks["Tech Comm"],
+      computer_fundamentals: marks["Comp Fund"],
+      user_id: userObj.user ? userObj.user.id : null,
+    },
+  ]);
+
+  if (error) {
+    showMessage("formMessage", "Database Error: " + error.message, "error");
+    return;
+  }
+
+  const student = {
+    name,
+    roll,
+    branch,
+    attendance,
+    marks,
+    createdAt: new Date().toISOString(),
+  };
+  students.push(student);
+  save();
+  showMessage("formMessage", "Student saved successfully!", "success");
+  openReport(roll);
+  $("studentForm").reset();
+});
 const marks={};for(const sub of subjects){const input=$("mark_"+sub.id),raw=input?.value,v=Number(raw);if(raw===""||!Number.isFinite(v)||v<0||v>100){showMessage("formMessage",`Enter valid marks from 0 to 100 for ${sub.name}.`);return}marks[sub.id]=v}
 const duplicate=students.some(s=>s.roll.toLowerCase()===roll.toLowerCase()&&s.id!==editingId);if(duplicate){showMessage("formMessage","That roll number already exists in the records available to you.");return}
 const payload={name,roll,branch,attendance,marks};const wasEditing=Boolean(editingId);try{let result;if(wasEditing){result=await db.from("students").update(payload).eq("id",editingId).select("id").single()}else{result=await db.from("students").insert({...payload,owner_id:user.id}).select("id").single()}if(result.error)throw result.error;const savedId=result.data.id;await loadStudents();resetStudentForm();showMessage("formMessage",wasEditing?"Student updated successfully.":"Student saved online successfully.","success");openReport(savedId)}catch(err){showMessage("formMessage",friendlyError(err))}});
